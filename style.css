@@ -300,6 +300,17 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     .fc-daygrid-event {
         font-size: 0.7rem !important;
         padding: 0.1rem 0.3rem !important;
+        margin-bottom: 1px !important;
+    }
+    
+    /* Calendar cells for mobile */
+    .fc-daygrid-day {
+        min-height: 60px !important;
+    }
+    
+    .fc-day-number {
+        font-size: 0.9rem !important;
+        padding: 0.3rem !important;
     }
     
     /* List view adjustments */
@@ -330,12 +341,36 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     }
     
     /* Modal adjustments */
+    .modal {
+        align-items: flex-start !important;
+        padding-top: 2rem !important;
+    }
+    
     .modal-content {
         width: 95%;
-        margin: 1rem;
+        margin: 0 auto;
         padding: 1.5rem;
-        max-height: 90vh;
+        max-height: 85vh;
         overflow-y: auto;
+        position: relative;
+        border-radius: 12px;
+    }
+    
+    .close-btn {
+        position: fixed !important;
+        top: 10px !important;
+        right: 15px !important;
+        z-index: 1001 !important;
+        background: rgba(0,0,0,0.5) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        line-height: 1 !important;
     }
     
     /* Form adjustments */
@@ -347,15 +382,36 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
         min-width: unset;
     }
     
+    .input-group input, .input-group select {
+        font-size: 16px !important; /* ป้องกันการ zoom ใน iOS */
+        padding: 1rem !important;
+    }
+    
+    .input-group label {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
     .form-buttons {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        margin-top: 2rem;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 1rem 0;
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        border-top: 1px solid var(--border-color);
     }
     
     button {
         width: 100%;
-        padding: 1rem;
-        font-size: 1rem;
+        padding: 1.2rem;
+        font-size: 1.1rem;
+        min-height: 48px; /* Touch target size */
     }
     
     /* Filter container */
@@ -407,6 +463,17 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     .fc-daygrid-event {
         font-size: 0.6rem !important;
         padding: 0.05rem 0.2rem !important;
+        margin-bottom: 1px !important;
+    }
+    
+    /* Smaller calendar cells for very small screens */
+    .fc-daygrid-day {
+        min-height: 50px !important;
+    }
+    
+    .fc-day-number {
+        font-size: 0.8rem !important;
+        padding: 0.2rem !important;
     }
     
     .table-container, #user-list-container {
@@ -424,6 +491,25 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
     
     .modal-content {
         padding: 1rem;
+        max-height: 80vh;
+    }
+    
+    .input-group input, .input-group select {
+        padding: 0.8rem !important;
+        font-size: 16px !important;
+    }
+    
+    button {
+        padding: 1rem !important;
+        font-size: 1rem !important;
+        min-height: 44px !important;
+    }
+    
+    .form-buttons {
+        margin-left: -1rem !important;
+        margin-right: -1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
     
     header h1 {

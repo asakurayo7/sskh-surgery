@@ -238,11 +238,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Calendar & Data ---
     function initializeCalendar() {
         const calendarEl = document.getElementById('calendar');
+        
+        // ตรวจสอบขนาดหน้าจอเพื่อกำหนด initial view
+        const isMobile = window.innerWidth <= 768;
+        const initialView = 'dayGridMonth'; // ใช้ view เดียวกันทั้งมือถือและเดสก์ท็อป
+        
+        // กำหนด header toolbar สำหรับมือถือและเดสก์ท็อป
+        const headerToolbar = isMobile 
+            ? { left: 'prev,next', center: 'title', right: 'today' }
+            : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' };
+        
         calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
+            initialView: initialView,
+            headerToolbar: headerToolbar,
             locale: 'th',
             selectable: true,
+            height: isMobile ? 'auto' : 600,
+            aspectRatio: isMobile ? 0.8 : 1.35,
+            eventDisplay: 'block',
+            dayMaxEvents: isMobile ? 1 : 3,
+            moreLinkClick: 'popover',
+            dayMaxEventRows: isMobile ? 2 : false,
             dateClick: (info) => openBookingModal(info.dateStr),
             eventClick: (info) => openBookingModal(null, info.event.id),
             datesSet: function(info) {
@@ -250,6 +266,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ใช้วันที่กลางเดือนแทน info.start เพื่อให้แน่ใจว่าเป็นเดือนที่ถูกต้อง
                 const midMonth = new Date(info.start.getTime() + (info.end.getTime() - info.start.getTime()) / 2);
                 renderBookingTable(midMonth);
+            },
+            // เพิ่มการจัดการขนาดหน้าจอแบบ responsive
+            windowResize: function() {
+                const newIsMobile = window.innerWidth <= 768;
+                if (newIsMobile !== isMobile) {
+                    // รีเฟรชปฏิทินเมื่อขนาดหน้าจอเปลี่ยน
+                    location.reload();
+                }
             }
         });
         calendar.render();
@@ -308,27 +332,91 @@ document.addEventListener('DOMContentLoaded', () => {
             .lte('startTime', endOfMonth)
             .order('startTime', { ascending: false });
             
+        // ดึงข้อมูลแพทย์แยกต่างหาก
+        if (bookings && bookings.length > 0) {
+            const userIds = [...new Set(bookings.map(b => b.user_id).filter(Boolean))];
+            const { data: profiles } = await supabaseClient
+                .from('profiles')
+                .select('id, full_name')
+                .in('id', userIds);
+                
+            // เพิ่มข้อมูลแพทย์เข้าไปใน bookings
+            bookings.forEach(booking => {
+                const profile = profiles?.find(p => p.id === booking.user_id);
+                booking.doctorName = profile?.full_name || 'แพทย์';
+            });
+        }
+            
         if (!bookings || bookings.length === 0) { 
             tableContainer.innerHTML = `<p>ไม่มีรายการนัดผ่าตัดในเดือน ${targetDate.toLocaleDateString('th-TH', {month: 'long', year: 'numeric'})}</p>`; 
             return; 
         }
 
-        let tableHTML = `<table><thead><tr><th>วันที่</th><th>เวลา</th><th>ห้อง</th><th>HN</th><th>ชื่อผู้ป่วย</th><th>Operation</th><th>แพทย์</th></tr></thead><tbody>`;
-        bookings.forEach(b => {
-            const start = new Date(b.startTime);
-            tableHTML += `<tr data-id="${b.id}">
-                <td>${start.toLocaleDateString('th-TH')}</td>
-                <td>${start.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})} - ${new Date(b.endTime).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</td>
-                <td>${b.room}</td>
-                <td>${b.patientHn || '-'}</td>
-                <td>${b.patientName}</td>
-                <td>${b.operation}</td>
-                <td>${currentUserProfile?.full_name || 'แพทย์'}</td>
-            </tr>`;
-        });
-        tableHTML += '</tbody></table>';
+        // ตรวจสอบว่าเป็นมือถือหรือไม่ เพื่อปรับตาราง
+        const isMobile = window.innerWidth <= 768;
+        
+        let tableHTML;
+        if (isMobile) {
+            // รูปแบบการ์ดสำหรับมือถือ
+            tableHTML = `<div class="mobile-cards">`;
+            bookings.forEach(b => {
+                const start = new Date(b.startTime);
+                const end = new Date(b.endTime);
+                tableHTML += `<div class="booking-card" data-id="${b.id}">
+                    <div class="card-header">
+                        <span class="patient-name">${b.patientName}</span>
+                        <span class="room-badge ${b.room.toLowerCase()}">${b.room}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-row">
+                            <strong>วันที่:</strong> ${start.toLocaleDateString('th-TH')}
+                        </div>
+                        <div class="card-row">
+                            <strong>เวลา:</strong> ${start.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})} - ${end.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}
+                        </div>
+                        <div class="card-row">
+                            <strong>HN:</strong> ${b.patientHn || '-'}
+                        </div>
+                        <div class="card-row">
+                            <strong>Operation:</strong> ${b.operation}
+                        </div>
+                        <div class="card-row">
+                            <strong>แพทย์:</strong> ${b.doctorName}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            tableHTML += '</div>';
+        } else {
+            // รูปแบบตารางปกติสำหรับเดสก์ท็อป
+            tableHTML = `<table><thead><tr><th>วันที่</th><th>เวลา</th><th>ห้อง</th><th>HN</th><th>ชื่อผู้ป่วย</th><th>Operation</th><th>แพทย์</th></tr></thead><tbody>`;
+            bookings.forEach(b => {
+                const start = new Date(b.startTime);
+                tableHTML += `<tr data-id="${b.id}">
+                    <td>${start.toLocaleDateString('th-TH')}</td>
+                    <td>${start.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})} - ${new Date(b.endTime).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</td>
+                    <td>${b.room}</td>
+                    <td>${b.patientHn || '-'}</td>
+                    <td>${b.patientName}</td>
+                    <td>${b.operation}</td>
+                    <td>${b.doctorName}</td>
+                </tr>`;
+            });
+            tableHTML += '</tbody></table>';
+        }
+        
         tableContainer.innerHTML = tableHTML;
-        tableContainer.querySelectorAll('tr[data-id]').forEach(row => row.addEventListener('click', () => openBookingModal(null, row.dataset.id)));
+        
+        // เพิ่ม event listeners สำหรับทั้งตารางและการ์ด
+        if (isMobile) {
+            tableContainer.querySelectorAll('.booking-card[data-id]').forEach(card => 
+                card.addEventListener('click', () => openBookingModal(null, card.dataset.id))
+            );
+        } else {
+            tableContainer.querySelectorAll('tr[data-id]').forEach(row => 
+                row.addEventListener('click', () => openBookingModal(null, row.dataset.id))
+            );
+        }
     }
 
 
