@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตารางผ่าตัด (OR Scheduler)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Login/Signup Screen -->
+    <div id="auth-screen" class="active">
+        <div class="auth-container">
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <h2><i class="fa-solid fa-hospital"></i> OR Scheduler - Login</h2>
+                <div class="input-group">
+                    <label for="login-email">อีเมล</label>
+                    <input type="email" id="login-email" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="login-password">รหัสผ่าน</label>
+                    <input type="password" id="login-password" required autocomplete="current-password">
+                </div>
+                <button type="submit">เข้าสู่ระบบ</button>
+                <p id="auth-error" class="error-message"></p>
+                <p class="toggle-auth">ยังไม่มีบัญชี? <a href="#" id="show-signup">สมัครสมาชิกที่นี่</a></p>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form">
+                <h2><i class="fa-solid fa-user-plus"></i> สมัครสมาชิก</h2>
+                 <div class="input-group">
+                    <label for="signup-full-name">ชื่อ-นามสกุล (สำหรับแสดงผล)</label>
+                    <input type="text" id="signup-full-name" required>
+                </div>
+                 <div class="input-group">
+                    <label for="signup-username">ชื่อผู้ใช้ (ย่อ)</label>
+                    <input type="text" id="signup-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-email">อีเมล</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-password">รหัสผ่าน</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit">สมัครสมาชิก</button>
+                <p class="toggle-auth">มีบัญชีอยู่แล้ว? <a href="#" id="show-login">กลับไปหน้า Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen">
+        <header>
+            <div class="header-left">
+                <h1><i class="fa-solid fa-calendar-days"></i> ตารางผ่าตัด</h1>
+                <div class="filter-container">
+                    <label for="room-filter">แสดงผล:</label>
+                    <select id="room-filter">
+                        <option value="all">ทุกห้อง</option>
+                        <option value="OR5">ห้องผ่าตัด 5</option>
+                        <option value="OR6">ห้องผ่าตัด 6</option>
+                    </select>
+                </div>
+            </div>
+            <div class="header-right">
+                <span id="welcome-message"></span>
+                <button id="admin-panel-btn" class="admin-only"><i class="fa-solid fa-user-gear"></i> จัดการผู้ใช้</button>
+                <button id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+            </div>
+        </header>
+
+        <main>
+            <div id='calendar'></div>
+            <div class="table-container">
+                <h2>รายการนัดผ่าตัดทั้งหมด</h2>
+                <div id="booking-table"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>พัฒนาโดย Pinyo Ardsalee</p>
+        </footer>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 id="modal-title">บันทึกตารางผ่าตัด</h3>
+            <form id="booking-form">
+                <input type="hidden" id="booking-id">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="patient-hn">HN</label>
+                        <input type="text" id="patient-hn" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="patient-name">ชื่อผู้ป่วย</label>
+                        <input type="text" id="patient-name" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="diagnosis">Diagnosis</label>
+                    <input type="text" id="diagnosis" required>
+                </div>
+                <div class="input-group">
+                    <label for="operation">Operation</label>
+                    <input type="text" id="operation" required>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="booking-date">วันที่</label>
+                        <input type="date" id="booking-date" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="start-time">เวลาเริ่ม</label>
+                        <select id="start-time" required>
+                            <option value="08:00">08:00</option>
+                            <option value="08:30">08:30</option>
+                            <option value="09:00">09:00</option>
+                            <option value="09:30">09:30</option>
+                            <option value="10:00">10:00</option>
+                            <option value="10:30">10:30</option>
+                            <option value="11:00">11:00</option>
+                            <option value="11:30">11:30</option>
+                            <option value="12:00">12:00</option>
+                            <option value="12:30">12:30</option>
+                            <option value="13:00">13:00</option>
+                            <option value="13:30">13:30</option>
+                            <option value="14:00">14:00</option>
+                            <option value="14:30">14:30</option>
+                            <option value="15:00">15:00</option>
+                            <option value="15:30">15:30</option>
+                            <option value="16:00">16:00</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="end-time">เวลาสิ้นสุด</label>
+                        <select id="end-time" required>
+                            <option value="09:00">09:00</option>
+                            <option value="09:30">09:30</option>
+                            <option value="10:00">10:00</option>
+                            <option value="10:30">10:30</option>
+                            <option value="11:00">11:00</option>
+                            <option value="11:30">11:30</option>
+                            <option value="12:00">12:00</option>
+                            <option value="12:30">12:30</option>
+                            <option value="13:00">13:00</option>
+                            <option value="13:30">13:30</option>
+                            <option value="14:00">14:00</option>
+                            <option value="14:30">14:30</option>
+                            <option value="15:00">15:00</option>
+                            <option value="15:30">15:30</option>
+                            <option value="16:00">16:00</option>
+                            <option value="16:30">16:30</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="room-select">ห้องผ่าตัด</label>
+                    <select id="room-select" required>
+                        <option value="OR5">ห้องผ่าตัด 5</option>
+                        <option value="OR6">ห้องผ่าตัด 6</option>
+                    </select>
+                </div>
+                <p id="form-error" class="error-message"></p>
+                <div class="form-buttons">
+                    <button type="submit" id="save-btn">บันทึก</button>
+                    <button type="button" id="delete-btn" class="danger-btn">ลบรายการ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>จัดการผู้ใช้งานระบบ</h3>
+            
+            <h4><i class="fa-solid fa-paper-plane"></i> เชิญแพทย์ใหม่เข้าระบบ</h4>
+            <form id="invite-user-form">
+                <div class="input-group">
+                    <label for="invite-full-name">ชื่อ-นามสกุล (เช่น นพ. สมชาย ใจดี)</label>
+                    <input type="text" id="invite-full-name" required>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="invite-username">ชื่อผู้ใช้ (สำหรับแสดงผลแบบย่อ)</label>
+                        <input type="text" id="invite-username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="invite-email">อีเมลของแพทย์</label>
+                        <input type="email" id="invite-email" required>
+                    </div>
+                </div>
+                <button type="submit">ส่งคำเชิญ</button>
+            </form>
+            <hr>
+            
+            <h4><i class="fa-solid fa-users"></i> รายชื่อผู้ใช้งานในระบบ</h4>
+            <div id="user-list-container"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/th.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+</body>
+</html>
