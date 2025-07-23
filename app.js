@@ -90,7 +90,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     logoutBtn.addEventListener('click', async () => {
-        await supabaseClient.auth.signOut();
+        const result = await Swal.fire({
+            title: 'ยืนยันการออกจากระบบ',
+            text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ออกจากระบบ',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (result.isConfirmed) {
+            await supabaseClient.auth.signOut();
+            
+            // แสดงข้อความยืนยันการออกจากระบบ
+            Swal.fire({
+                icon: 'success',
+                title: 'ออกจากระบบสำเร็จ',
+                text: 'คุณได้ออกจากระบบเรียบร้อยแล้ว',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     });
 
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -186,7 +208,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- UI Management ---
-    function showAuth() { authScreen.classList.add('active'); appScreen.classList.remove('active'); }
+    function showAuth() { 
+        authScreen.classList.add('active'); 
+        appScreen.classList.remove('active'); 
+        
+        // รีเซ็ตฟอร์มเมื่อกลับมาหน้า login
+        loginForm.reset();
+        signupForm.reset();
+        authError.textContent = '';
+        
+        // แสดงฟอร์ม login เป็นค่าเริ่มต้น
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+    }
     function showApp() {
         authScreen.classList.remove('active');
         appScreen.classList.add('active');
