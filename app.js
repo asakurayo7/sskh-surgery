@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const startTimeInput = document.getElementById('start-time');
     const endTimeInput = document.getElementById('end-time');
     const roomSelect = document.getElementById('room-select');
+    const recorderInfoDiv = document.getElementById('recorder-info');
+    const recorderNameInput = document.getElementById('recorder-name');
     const deleteBtn = document.getElementById('delete-btn');
     const saveBtn = document.getElementById('save-btn');
     const formError = document.getElementById('form-error');
@@ -303,8 +305,25 @@ document.addEventListener('DOMContentLoaded', () => {
         saveBtn.disabled = false;
         
         if (bookingId) {
-            const { data: booking } = await supabaseClient.from('bookings').select('*').eq('id', bookingId).single();
+            const { data: booking } = await supabaseClient
+                .from('bookings')
+                .select('*')
+                .eq('id', bookingId)
+                .single();
             if (!booking) return;
+            
+            // ดึงข้อมูลแพทย์ผู้บันทึกแยกต่างหาก
+            let doctorName = 'แพทย์';
+            if (booking.user_id) {
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('full_name')
+                    .eq('id', booking.user_id)
+                    .single();
+                if (profile) {
+                    doctorName = profile.full_name;
+                }
+            }
 
             modalTitle.textContent = 'รายละเอียดการจอง';
             bookingIdInput.value = booking.id;
@@ -321,6 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
             endTimeInput.value = endDate.toTimeString().slice(0, 5);
             
             roomSelect.value = booking.room;
+            
+            // แสดงข้อมูลผู้บันทึก
+            recorderInfoDiv.style.display = 'block';
+            recorderNameInput.value = doctorName;
 
             const canEdit = currentUserProfile.role === 'admin' || currentUserProfile.id === booking.user_id;
             deleteBtn.style.display = 'none'; // ซ่อนปุ่มลบไว้ก่อน
@@ -356,6 +379,10 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingDateInput.value = dateStr;
             startTimeInput.value = '08:00';
             endTimeInput.value = '10:00';
+            
+            // ซ่อนข้อมูลผู้บันทึกเมื่อสร้างใหม่
+            recorderInfoDiv.style.display = 'none';
+            
             deleteBtn.style.display = 'none';
             saveBtn.style.display = 'inline-block';
             Array.from(bookingForm.elements).forEach(el => el.disabled = false);

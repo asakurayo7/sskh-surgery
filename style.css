@@ -215,3 +215,289 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 #admin-modal hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--border-color); }
 #admin-modal h3, #admin-modal h4 { margin-top: 0; color: var(--primary-color); }
 #admin-modal h4 { margin-top: 1rem; }
+
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 768px) {
+    /* Header adjustments */
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .header-left, .header-right {
+        width: 100%;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    header h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #welcome-message {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Main content */
+    main {
+        padding: 1rem;
+    }
+    
+    /* Auth container */
+    .auth-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    /* Calendar container */
+    #calendar {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* FullCalendar responsive adjustments */
+    .fc-toolbar {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .fc-toolbar-chunk {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+    
+    .fc-button {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.85rem !important;
+        min-width: 60px !important;
+    }
+    
+    .fc-button-group .fc-button {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.8rem !important;
+        min-width: 50px !important;
+    }
+    
+    .fc-toolbar-title {
+        font-size: 1.1rem !important;
+        margin: 0.5rem 0 !important;
+        text-align: center !important;
+    }
+    
+    /* Calendar events text */
+    .fc-event-title {
+        font-size: 0.75rem !important;
+        padding: 0.2rem !important;
+    }
+    
+    .fc-daygrid-event {
+        font-size: 0.7rem !important;
+        padding: 0.1rem 0.3rem !important;
+    }
+    
+    /* List view adjustments */
+    .fc-list-event {
+        font-size: 0.85rem !important;
+    }
+    
+    .fc-list-event-title {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Table container */
+    .table-container, #user-list-container {
+        padding: 1rem;
+        margin: 1rem auto;
+        overflow-x: auto;
+    }
+    
+    /* Table styles */
+    table {
+        font-size: 0.85rem;
+        min-width: 600px;
+    }
+    
+    th, td {
+        padding: 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Modal adjustments */
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+        padding: 1.5rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    /* Form adjustments */
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-row .input-group {
+        min-width: unset;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    /* Filter container */
+    .filter-container {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .filter-container select {
+        width: 100%;
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens */
+    .auth-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    
+    #calendar {
+        padding: 0.5rem;
+    }
+    
+    /* Smaller calendar buttons for very small screens */
+    .fc-button {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        min-width: 45px !important;
+    }
+    
+    .fc-button-group .fc-button {
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.7rem !important;
+        min-width: 40px !important;
+    }
+    
+    .fc-toolbar-title {
+        font-size: 1rem !important;
+    }
+    
+    /* Very small text for events */
+    .fc-event-title {
+        font-size: 0.65rem !important;
+        padding: 0.1rem !important;
+    }
+    
+    .fc-daygrid-event {
+        font-size: 0.6rem !important;
+        padding: 0.05rem 0.2rem !important;
+    }
+    
+    .table-container, #user-list-container {
+        padding: 0.5rem;
+        margin: 0.5rem auto;
+    }
+    
+    table {
+        font-size: 0.8rem;
+    }
+    
+    th, td {
+        padding: 0.4rem;
+    }
+    
+    .modal-content {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.1rem;
+    }
+    
+    #welcome-message {
+        font-size: 0.85rem;
+    }
+}
+
+/* --- Mobile Cards for Booking List --- */
+.mobile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.booking-card {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.booking-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.patient-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.room-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+}
+
+.room-badge.or5 {
+    background-color: #3788d8;
+}
+
+.room-badge.or6 {
+    background-color: #34a853;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.card-row strong {
+    min-width: 80px;
+    margin-right: 0.5rem;
+    color: var(--secondary-color);
+}
