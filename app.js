@@ -12,6 +12,36 @@ document.addEventListener('DOMContentLoaded', () => {
     let calendar;
     let currentUserProfile = null;
 
+    // --- CREDENTIAL MANAGEMENT FUNCTIONS ---
+    function saveCredentials(email, password) {
+        if (document.getElementById('remember-me').checked) {
+            localStorage.setItem('rememberedEmail', email);
+            localStorage.setItem('rememberedPassword', password);
+            localStorage.setItem('rememberCredentials', 'true');
+        } else {
+            clearCredentials();
+        }
+    }
+
+    function loadCredentials() {
+        if (localStorage.getItem('rememberCredentials') === 'true') {
+            const savedEmail = localStorage.getItem('rememberedEmail');
+            const savedPassword = localStorage.getItem('rememberedPassword');
+            
+            if (savedEmail && savedPassword) {
+                document.getElementById('login-email').value = savedEmail;
+                document.getElementById('login-password').value = savedPassword;
+                document.getElementById('remember-me').checked = true;
+            }
+        }
+    }
+
+    function clearCredentials() {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
+        localStorage.removeItem('rememberCredentials');
+    }
+
     // (ส่วนนี้เหมือนเดิม)
     const authScreen = document.getElementById('auth-screen');
     const loginForm = document.getElementById('login-form');
@@ -59,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.log('Login successful:', data);
             authError.textContent = '';
+            
+            // บันทึกข้อมูลล็อกอินหากผู้ใช้เลือก
+            saveCredentials(email, password);
         }
     });
 
@@ -103,6 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (result.isConfirmed) {
             await supabaseClient.auth.signOut();
+            
+            // ลบข้อมูลล็อกอินที่บันทึกไว้
+            clearCredentials();
             
             // แสดงข้อความยืนยันการออกจากระบบ
             Swal.fire({
@@ -201,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('show-signup').addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.remove('active'); signupForm.classList.add('active'); authError.textContent = ''; });
-    document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.remove('active'); loginForm.classList.add('active'); authError.textContent = ''; });
+    document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); signupForm.classList.remove('active'); loginForm.classList.add('active'); authError.textContent = ''; loadCredentials(); });
 
     // Room filter event listener
     roomFilter.addEventListener('change', refreshData);
@@ -220,6 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // แสดงฟอร์ม login เป็นค่าเริ่มต้น
         loginForm.classList.add('active');
         signupForm.classList.remove('active');
+        
+        // โหลดข้อมูลล็อกอินที่บันทึกไว้
+        loadCredentials();
     }
     function showApp() {
         authScreen.classList.remove('active');

@@ -15,7 +15,7 @@
         <div class="auth-container">
             <!-- Login Form -->
             <form id="login-form" class="auth-form active">
-                <h2><i class="fa-solid fa-hospital"></i> OR Scheduler โรงพยาบาลศรีสะเกษ - Login</h2>
+                <h2><i class="fa-solid fa-hospital"></i> OR Scheduler - Login</h2>
                 <div class="input-group">
                     <label for="login-email">อีเมล</label>
                     <input type="email" id="login-email" required autocomplete="username">
@@ -25,6 +25,11 @@
                     <input type="password" id="login-password" required autocomplete="current-password">
                 </div>
                 <button type="submit">เข้าสู่ระบบ</button>
+                <div class="input-group remember-me">
+                    <label for="remember-me" class="checkbox-label">
+                        <input type="checkbox" id="remember-me"> จดจำข้อมูลล็อกอิน
+                    </label>
+                </div>
                 <p id="auth-error" class="error-message"></p>
                 <p class="toggle-auth">ยังไม่มีบัญชี? <a href="#" id="show-signup">สมัครสมาชิกที่นี่</a></p>
             </form>
@@ -58,14 +63,17 @@
     <div id="app-screen">
         <header>
             <div class="header-left">
-                <h1><i class="fa-solid fa-calendar-days"></i> ตารางผ่าตัด  โรงพยาบาลศรีสะเกษ </h1>
+                <h1><i class="fa-solid fa-calendar-days"></i> ตารางผ่าตัด</h1>
                 <div class="filter-container">
-                    <label for="room-filter">แสดงผล:</label>
-                    <select id="room-filter">
-                        <option value="all">ทุกห้อง</option>
-                        <option value="OR5">ห้องผ่าตัด 5</option>
-                        <option value="OR6">ห้องผ่าตัด 6</option>
-                    </select>
+                    <label for="room-filter"><i class="fa-solid fa-filter"></i> แสดงผล:</label>
+                    <div class="select-wrapper">
+                        <select id="room-filter">
+                            <option value="all">🏥 ทุกห้อง</option>
+                            <option value="OR5">🔵 ห้องผ่าตัด 5</option>
+                            <option value="OR6">🟢 ห้องผ่าตัด 6</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </div>
                 </div>
             </div>
             <div class="header-right">

@@ -72,6 +72,63 @@ header h1 { margin: 0; font-size: 1.5rem; color: var(--primary-color); }
 .header-left, .header-right { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
 #welcome-message { font-weight: 500; }
 
+/* --- Filter Container --- */
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.filter-container label {
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: linear-gradient(135deg, var(--white-color) 0%, #f8f9fa 100%);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.select-wrapper select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.15);
+    transform: translateY(-1px);
+}
+.select-wrapper select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+.select-arrow {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+.select-wrapper:hover .select-arrow {
+    color: var(--primary-color);
+    transform: translateY(-50%) rotate(180deg);
+}
+
 main { padding: 2rem; }
 
 /* --- Calendar --- */
@@ -181,6 +238,32 @@ footer p {
 /* --- Forms & Buttons --- */
 .input-group { margin-bottom: 1rem; }
 .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.input-group.remember-me { 
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-weight: 400 !important;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+.checkbox-label input[type="checkbox"] {
+    width: auto !important;
+    margin: 0 !important;
+    cursor: pointer;
+    transform: scale(1.1);
+    accent-color: var(--primary-color);
+}
+.checkbox-label:hover {
+    color: var(--primary-color);
+}
 .input-group input, .input-group select {
     width: 100%;
     padding: 0.75rem;
